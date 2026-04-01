@@ -327,6 +327,19 @@ input::placeholder, textarea::placeholder { color: var(--text3); }
       <p>Preencha os dados abaixo para solicitar uma compra ou contratação de serviço.</p>
     </div>
 
+    <!-- AVISO DE PRAZO -->
+    <div class="card" style="background: var(--accent-light); border-left: 4px solid var(--accent); margin-bottom: 1.5rem;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 28px;">⏱️</span>
+        <div>
+          <strong style="color: var(--accent);">Prazo para análise e aprovação</strong>
+          <p style="margin: 4px 0 0 0; font-size: 14px; color: var(--text2);">
+            O prazo para análise e aprovação é de até <strong>5 dias úteis</strong> após o envio completo da solicitação.
+          </p>
+        </div>
+      </div>
+    </div>
+
     <div class="card">
       <div class="card-title">Informações gerais</div>
       <div class="form-grid">
@@ -366,6 +379,11 @@ input::placeholder, textarea::placeholder { color: var(--text3); }
         <div class="form-group">
           <label>Fornecedor sugerido</label>
           <input type="text" id="f-fornecedor" placeholder="Nome do fornecedor (opcional)">
+        </div>
+        <div class="form-group">
+          <label>Link do anexo (Google Drive)</label>
+          <input type="url" id="f-link" placeholder="https://drive.google.com/...">
+          <small style="font-size: 11px; color: var(--text3);">Faça upload no Drive e cole o link aqui</small>
         </div>
         <div class="form-group">
           <label>Prazo desejado</label>
@@ -466,7 +484,7 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3200);
 }
 
-// URL DO APP SCRIPT (NOVA)
+// URL DO APP SCRIPT
 const URL_SHEETS = "https://script.google.com/macros/s/AKfycbx7hDc6imUxaJGe2cin1hvpdMnJSM9O3xi0Z9TsdO-eK9JvzsGX_N4QKQk95MKs-lRQNQ/exec";
 
 async function atualizarStatusNaPlanilha(id, novoStatus, observacao) {
@@ -498,6 +516,7 @@ function submitForm() {
     fornecedor: document.getElementById('f-fornecedor').value.trim(),
     prazo: document.getElementById('f-prazo').value,
     obs: document.getElementById('f-obs').value.trim(),
+    linkAnexo: document.getElementById('f-link').value.trim(),
     items, status: 'Pendente',
     data: now.toLocaleDateString('pt-BR'),
     hora: now.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}),
@@ -508,7 +527,7 @@ function submitForm() {
   orders.unshift(order);
   save();
   showToast('✔ Solicitação ' + order.id + ' enviada!');
-  ['f-empresa','f-responsavel','f-email','f-fornecedor','f-obs'].forEach(id => document.getElementById(id).value = '');
+  ['f-empresa','f-responsavel','f-email','f-fornecedor','f-link','f-obs'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('f-tipo').value = '';
   document.getElementById('f-urgencia').value = 'Normal';
   document.getElementById('f-prazo').value = '';
@@ -548,23 +567,23 @@ function renderPainel() {
   list.innerHTML = filtered.map(o => {
     const urgClass = o.urgencia === 'Muito urgente' ? 'muito-urgente' : o.urgencia === 'Urgente' ? 'urgente' : '';
     const urgBadge = o.urgencia !== 'Normal' ? `<span class="${urgClass}">⚡ ${o.urgencia}</span>` : '';
-    const itemRows = o.items.map(i => `<tr><td>${i.desc}</td><td>${i.qtd}</td><td>${i.valor || '—'}</td> </tr>`).join('');
+    const itemRows = o.items.map(i => `<tr><td>${i.desc}</td><td>${i.qtd}</td><td>${i.valor || '—'}</td>`).join('');
     const prazoFmt = o.prazo ? new Date(o.prazo + 'T00:00:00').toLocaleDateString('pt-BR') : '';
     let actions = [];
     if (o.status === 'Pendente') actions.push(`<button class="btn-action btn-aprovar" onclick="setStatus('${o.id}','Aprovado')">✔ Aprovar</button><button class="btn-action btn-recusar" onclick="setStatus('${o.id}','Recusado')">✖ Recusar</button>`);
     if (o.status === 'Aprovado') actions.push(`<button class="btn-action" onclick="setStatus('${o.id}','Concluído')">✔ Concluído</button>`);
     if (o.status !== 'Pendente') actions.push(`<button class="btn-action" onclick="setStatus('${o.id}','Pendente')">↩ Reabrir</button>`);
     actions.push(`<button class="btn-ver" id="btn-ver-${o.id}" onclick="toggleDetail('${o.id}')">▼ Ver itens</button>`);
-    return `<div class="order-card"><div class="order-card-top"><div class="order-top-row"><div><div class="order-id">${o.id} · ${o.data} às ${o.hora}</div><div class="order-empresa">${o.empresa}</div><div class="order-tipo">${o.tipo}</div></div><span class="badge badge-${o.status}">${o.status}</span></div><div class="order-meta"><span>👤 ${o.responsavel}</span>${o.fornecedor ? `<span>🏪 ${o.fornecedor}</span>` : ''}${prazoFmt ? `<span>📅 Prazo: ${prazoFmt}</span>` : ''}${urgBadge}</div></div><div class="order-footer">${actions.join('')}</div><div class="order-detail" id="det-${o.id}"><table class="detail-items"><thead><tr><th>Item</th><th>Qtd</th><th>Valor est.</th></tr></thead><tbody>${itemRows}</tbody></table>${o.obs ? `<div class="detail-obs"><strong>Observações</strong>${o.obs}</div>` : ''}</div></div>`;
+    return `<div class="order-card"><div class="order-card-top"><div class="order-top-row"><div><div class="order-id">${o.id} · ${o.data} às ${o.hora}</div><div class="order-empresa">${o.empresa}</div><div class="order-tipo">${o.tipo}</div></div><span class="badge badge-${o.status}">${o.status}</span></div><div class="order-meta"><span>👤 ${o.responsavel}</span>${o.fornecedor ? `<span>🏪 ${o.fornecedor}</span>` : ''}${prazoFmt ? `<span>📅 Prazo: ${prazoFmt}</span>` : ''}${urgBadge}</div></div><div class="order-footer">${actions.join('')}</div><div class="order-detail" id="det-${o.id}"><table class="detail-items"><thead><tr><th>Item</th><th>Qtd</th><th>Valor est.</th> </thead><tbody>${itemRows}</tbody> </table>${o.obs ? `<div class="detail-obs"><strong>Observações</strong>${o.obs}</div>` : ''}</div></div>`;
   }).join('');
 }
 
 function exportCSV() {
   if (!orders.length) { alert('Não há pedidos para exportar.'); return; }
-  const header = ['ID','Data','Empresa','Responsável','E-mail','Tipo','Urgência','Status','Fornecedor','Prazo','Itens','Observações'];
+  const header = ['ID','Data','Empresa','Responsável','E-mail','Tipo','Urgência','Status','Fornecedor','Prazo','Itens','Link Anexo','Observações'];
   const rows = orders.map(o => {
     const itens = o.items.map(i => `${i.desc} (x${i.qtd})`).join(' | ');
-    return [o.id, o.data+' '+o.hora, o.empresa, o.responsavel, o.email, o.tipo, o.urgencia, o.status, o.fornecedor||'', o.prazo||'', itens, o.obs||'']
+    return [o.id, o.data+' '+o.hora, o.empresa, o.responsavel, o.email, o.tipo, o.urgencia, o.status, o.fornecedor||'', o.prazo||'', itens, o.linkAnexo||'', o.obs||'']
       .map(v => '"' + String(v).replace(/"/g,'""') + '"').join(',');
   });
   const csv = '\uFEFF' + [header.join(','), ...rows].join('\n');
