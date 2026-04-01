@@ -422,7 +422,8 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3200);
 }
 
-const URL_SHEETS = "https://script.google.com/macros/s/AKfycbxfQ-2bw_4r8kNRtn8lg6wEwp3vJAXuqsl_sNX-rKVZhGjzrNpEhnVU4FivSmC2SQFtjg/exec";
+// URL DO APP SCRIPT (ATUALIZADA)
+const URL_SHEETS = "https://script.google.com/macros/s/AKfycbz1TSLkO0DtpgdJ6V9Ey_tSB3xuIsWju9pelbxQHYioi713LOzAJOIO9FagITKCaLlM/exec";
 
 async function atualizarStatusNaPlanilha(id, novoStatus, observacao) {
   try {
@@ -504,7 +505,7 @@ function renderPainel() {
   list.innerHTML = filtered.map(o => {
     const urgClass = o.urgencia === 'Muito urgente' ? 'muito-urgente' : o.urgencia === 'Urgente' ? 'urgente' : '';
     const urgBadge = o.urgencia !== 'Normal' ? `<span class="${urgClass}">⚡ ${o.urgencia}</span>` : '';
-    const itemRows = o.items.map(i => ` <td>${i.desc}</td><td>${i.qtd}</td><td>${i.valor || '—'}</td>`).join('');
+    const itemRows = o.items.map(i => `  <td>${i.desc}</td><td>${i.qtd}</td><td>${i.valor || '—'}</td>`).join('');
     const prazoFmt = o.prazo ? new Date(o.prazo + 'T00:00:00').toLocaleDateString('pt-BR') : '';
     let actions = [];
     if (o.status === 'Pendente') actions.push(`<button class="btn-action btn-aprovar" onclick="setStatus('${o.id}','Aprovado')">✔ Aprovar</button><button class="btn-action btn-recusar" onclick="setStatus('${o.id}','Recusado')">✖ Recusar</button>`);
