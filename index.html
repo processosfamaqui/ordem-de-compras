@@ -484,8 +484,8 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3200);
 }
 
-// URL DO APP SCRIPT - CORRETA!
-const URL_SHEETS = "https://script.google.com/macros/s/AKfycbwt872_uv3Rn_mIHno9y0A7Sd33YmP2iLyUgBCQeFF6VU1VIOQj83_wOGlBjyQeLiBb1w/exec";
+// URL DO APP SCRIPT - NOVA PLANILHA
+const URL_SHEETS = "https://script.google.com/macros/s/AKfycbweMUyB60UCirAYPVnoQ5yrW_VnDnGjBnYdQBoU3l0EEwaZoiyh6h4sSLG2hp186GZhEcA/exec";
 
 async function atualizarStatusNaPlanilha(id, novoStatus, observacao) {
   try {
@@ -567,7 +567,7 @@ function renderPainel() {
   list.innerHTML = filtered.map(o => {
     const urgClass = o.urgencia === 'Muito urgente' ? 'muito-urgente' : o.urgencia === 'Urgente' ? 'urgente' : '';
     const urgBadge = o.urgencia !== 'Normal' ? `<span class="${urgClass}">⚡ ${o.urgencia}</span>` : '';
-    const itemRows = o.items.map(i => `<td><td>${i.desc}</td><td>${i.qtd}</td><td>${i.valor || '—'}</td>`).join('');
+    const itemRows = o.items.map(i => `<tr><td>${i.desc}</td><td>${i.qtd}</td><td>${i.valor || '—'}</td></tr>`).join('');
     const prazoFmt = o.prazo ? new Date(o.prazo + 'T00:00:00').toLocaleDateString('pt-BR') : '';
     let actions = [];
     if (o.status === 'Pendente') actions.push(`<button class="btn-action btn-aprovar" onclick="setStatus('${o.id}','Aprovado')">✔ Aprovar</button><button class="btn-action btn-recusar" onclick="setStatus('${o.id}','Recusado')">✖ Recusar</button>`);
