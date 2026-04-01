@@ -1,3 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ordem de Compra e Serviços — Famaqui</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F4F2EE;
+  --surface: #FFFFFF;
+  --surface2: #ECEAE5;
+  --border: #DEDAD2;
+  --border2: #C4BFB5;
+  --text: #1C1A17;
+  --text2: #6B6560;
+  --text3: #A09A91;
+  --accent: #1E4A76;
+  --accent-light: #E8F0F7;
+  --accent-mid: #2C628F;
+  --warn: #B85C00;
+  --warn-light: #FEF3E7;
+  --danger: #A82828;
+  --danger-light: #FDEAEA;
+  --success: #1B6B3A;
+  --success-light: #E8F5EE;
+  --r: 10px;
+  --rlg: 14px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; line-height: 1.6; }
+
+header {
+  background: var(--accent);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 62px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+.logo { display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; }
+.logo-box {
+  width: 34px; height: 34px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.logo-text { font-weight: 600; font-size: 16px; letter-spacing: -0.3px; }
+.logo-sub { font-size: 12px; opacity: 0.7; font-weight: 300; }
+nav { display: flex; gap: 4px; }
+nav button {
+  background: rgba(255,255,255,0.12);
+  border: none;
+  color: rgba(255,255,255,0.8);
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+nav button:hover { background: rgba(255,255,255,0.2); color: #fff; }
+nav button.active { background: rgba(255,255,255,0.25); color: #fff; }
+
+main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+.page { display: none; }
+.page.active { display: block; }
+
+.page-header { margin-bottom: 2rem; }
+.page-header h1 { font-size: 24px; font-weight: 600; letter-spacing: -0.5px; }
+.page-header p { color: var(--text2); font-size: 14px; margin-top: 4px; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--rlg);
+  padding: 1.75rem;
+  margin-bottom: 1rem;
+}
+.card-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3); margin-bottom: 1.25rem; }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+label { font-size: 13px; font-weight: 500; color: var(--text2); }
+input, select, textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  background: var(--surface);
+  color: var(--text);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  appearance: none;
+}
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239E9891' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+textarea { resize: vertical; min-height: 90px; }
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent-mid);
+  box-shadow: 0 0 0 3px rgba(30,74,118,0.1);
+}
+input::placeholder, textarea::placeholder { color: var(--text3); }
+
+.item-header { display: grid; grid-template-columns: 2.5fr 0.8fr 1.2fr 36px; gap: 8px; margin-bottom: 6px; }
+.item-header span { font-size: 12px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
+.item-row { display: grid; grid-template-columns: 2.5fr 0.8fr 1.2fr 36px; gap: 8px; margin-bottom: 8px; align-items: center; }
+.item-row input { font-size: 14px; }
+.btn-remove {
+  width: 34px; height: 34px;
+  border: 1px solid var(--border);
+  background: none;
+  border-radius: 8px;
+  color: var(--text3);
+  cursor: pointer;
+  font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.btn-remove:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-light); }
+.btn-add-item {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--accent-mid);
+  background: var(--accent-light);
+  border: 1px solid rgba(30,74,118,0.2);
+  border-radius: 8px;
+  padding: 7px 14px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  transition: all 0.15s;
+  margin-top: 4px;
+}
+.btn-add-item:hover { background: #d9e6f5; }
+
+.form-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+.required-note { font-size: 12px; color: var(--text3); }
+.btn-submit {
+  padding: 11px 32px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--r);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: -0.2px;
+}
+.btn-submit:hover { background: var(--accent-mid); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(30,74,118,0.25); }
+.btn-submit:active { transform: translateY(0); }
+
+#toast {
+  position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
+  background: var(--accent);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 14px; font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  z-index: 999;
+  pointer-events: none;
+}
+#toast.show { transform: translateX(-50%) translateY(0); }
+
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 1.5rem; }
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 1rem 1.25rem;
+}
+.stat-label { font-size: 12px; color: var(--text3); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.stat-value { font-size: 28px; font-weight: 600; letter-spacing: -1px; }
+.stat-value.warn { color: var(--warn); }
+.stat-value.success { color: var(--success); }
+.stat-value.muted { color: var(--text3); }
+
+.filter-bar { display: flex; gap: 10px; margin-bottom: 1.25rem; align-items: center; flex-wrap: wrap; }
+.filter-bar input { flex: 1; min-width: 180px; }
+.filter-bar select { width: 170px; flex-shrink: 0; }
+
+.orders-list { display: flex; flex-direction: column; gap: 10px; }
+.order-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--rlg);
+  overflow: hidden;
+  transition: box-shadow 0.15s;
+}
+.order-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+.order-card-top { padding: 1.1rem 1.25rem; }
+.order-top-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.order-id { font-size: 11px; font-weight: 600; color: var(--text3); letter-spacing: 0.5px; margin-bottom: 3px; font-family: 'DM Sans', monospace; }
+.order-empresa { font-size: 16px; font-weight: 600; letter-spacing: -0.3px; }
+.order-tipo { font-size: 13px; color: var(--text2); margin-top: 2px; }
+.badge {
+  display: inline-flex; align-items: center;
+  font-size: 12px; font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 50px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.badge-Pendente { background: var(--warn-light); color: var(--warn); }
+.badge-Aprovado { background: var(--success-light); color: var(--success); }
+.badge-Recusado { background: var(--danger-light); color: var(--danger); }
+.badge-Concluído { background: var(--surface2); color: var(--text3); }
+.order-meta { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; font-size: 13px; color: var(--text2); }
+.urgente { color: var(--warn); font-weight: 600; }
+.muito-urgente { color: var(--danger); font-weight: 600; }
+
+.order-footer {
+  border-top: 1px solid var(--border);
+  padding: 10px 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg);
+}
+.btn-action {
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  color: var(--text2);
+  transition: all 0.15s;
+}
+.btn-action:hover { background: var(--surface2); }
+.btn-aprovar { border-color: rgba(27,107,58,0.4); color: var(--success); background: var(--success-light); }
+.btn-aprovar:hover { background: #d4edde; }
+.btn-recusar { border-color: rgba(168,40,40,0.3); color: var(--danger); background: var(--danger-light); }
+.btn-recusar:hover { background: #fad6d6; }
+.btn-ver { margin-left: auto; font-size: 12px; color: var(--text3); background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+.btn-ver:hover { color: var(--text2); }
+
+.order-detail {
+  display: none;
+  background: var(--surface2);
+  border-top: 1px solid var(--border);
+  padding: 1rem 1.25rem;
+}
+.order-detail.open { display: block; }
+.detail-items { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 10px; }
+.detail-items th { text-align: left; font-weight: 500; color: var(--text3); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; padding: 0 0 6px; border-bottom: 1px solid var(--border); }
+.detail-items td { padding: 6px 0; border-bottom: 1px solid var(--border); color: var(--text2); }
+.detail-items td:last-child { text-align: right; }
+.detail-obs { margin-top: 10px; font-size: 13px; color: var(--text2); background: var(--surface); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); }
+.detail-obs strong { color: var(--text3); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px; }
+
+.empty-state { text-align: center; padding: 4rem 2rem; color: var(--text3); }
+.empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+.empty-state p { font-size: 14px; }
+
+.export-btn {
+  margin-left: auto;
+  padding: 8px 16px;
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  color: var(--text2);
+  transition: all 0.15s;
+  display: flex; align-items: center; gap: 6px;
+}
+.export-btn:hover { background: var(--surface2); }
+
+@media (max-width: 640px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .form-group.full { grid-column: 1; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .item-header { display: none; }
+  .item-row { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; }
+  .item-row .btn-remove { grid-row: 1; grid-column: 2; justify-self: end; }
+  nav button span.nav-label { display: none; }
+  header { padding: 0 1rem; }
+  main { padding: 1.5rem 1rem 3rem; }
+  .filter-bar { flex-direction: column; }
+  .filter-bar input, .filter-bar select { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-box">📋</div>
+    <div>
+      <div class="logo-text">Ordem de Compra e Serviços</div>
+      <div class="logo-sub">Famaqui</div>
+    </div>
+  </div>
+  <nav>
+    <button class="active" onclick="showPage('form')">➕ Nova Solicitação</button>
+    <button onclick="showPage('painel')">📊 Painel</button>
+  </nav>
+</header>
+
+<main>
+  <div id="page-form" class="page active">
+    <div class="page-header">
+      <h1>Nova solicitação</h1>
+      <p>Preencha os dados abaixo para solicitar uma compra ou contratação de serviço.</p>
+    </div>
+
+    <div class="card" style="background: var(--accent-light); border-left: 4px solid var(--accent); margin-bottom: 1.5rem;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 28px;">⏱️</span>
+        <div>
+          <strong style="color: var(--accent);">Prazo para análise e aprovação</strong>
+          <p style="margin: 4px 0 0 0; font-size: 14px; color: var(--text2);">O prazo para análise e aprovação é de até <strong>5 dias úteis</strong> após o envio completo da solicitação.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Informações gerais</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Empresa / Setor solicitante *</label><input type="text" id="f-empresa" placeholder="Ex: Famaqui"></div>
+        <div class="form-group"><label>Responsável pela solicitação *</label><input type="text" id="f-responsavel" placeholder="Nome completo"></div>
+        <div class="form-group"><label>E-mail para retorno *</label><input type="email" id="f-email" placeholder="email@famaqui.com.br"><small style="font-size: 11px; color: var(--text3);">Você receberá um e-mail quando o pedido for aprovado ou recusado</small></div>
+        <div class="form-group"><label>Tipo de solicitação *</label><select id="f-tipo"><option value="">Selecione...</option><option>Compra de produto</option><option>Contratação de serviço</option><option>Renovação de contrato</option><option>Compra de material de escritório</option><option>Compra de equipamento</option><option>Outro</option></select></div>
+        <div class="form-group"><label>Urgência</label><select id="f-urgencia"><option>Normal</option><option>Urgente</option><option>Muito urgente</option></select></div>
+        <div class="form-group"><label>Fornecedor sugerido</label><input type="text" id="f-fornecedor" placeholder="Nome do fornecedor (opcional)"></div>
+        <div class="form-group"><label>Link do anexo (Google Drive)</label><input type="url" id="f-link" placeholder="https://drive.google.com/..."><small style="font-size: 11px; color: var(--text3);">Faça upload no Drive e cole o link aqui</small></div>
+        <div class="form-group"><label>Prazo desejado</label><input type="date" id="f-prazo"></div>
+        <div class="form-group full"><label>Justificativa / Observações</label><textarea id="f-obs" placeholder="Descreva o motivo da solicitação, uso pretendido, referências, etc."></textarea></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Itens solicitados *</div>
+      <div class="item-header"><span>Descrição do item</span><span>Qtd</span><span>Valor estimado</span><span></span></div>
+      <div id="items-list"><div class="item-row"><input type="text" placeholder="Ex: Teste de avaliação psicológica" class="item-desc"><input type="number" placeholder="1" min="1" class="item-qtd"><input type="text" placeholder="R$ 0,00" class="item-valor"><button class="btn-remove" onclick="removeItem(this)" title="Remover" style="visibility:hidden">×</button></div></div>
+      <button class="btn-add-item" onclick="addItem()">+ Adicionar item</button>
+      <div class="form-footer"><span class="required-note">* Campos obrigatórios</span><button class="btn-submit" onclick="submitForm()">Enviar solicitação →</button></div>
+    </div>
+  </div>
+
+  <div id="page-painel" class="page">
+    <div class="page-header" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div><h1>Painel de pedidos</h1><p>Gerencie e aprove as solicitações recebidas.</p></div>
+      <button class="export-btn" onclick="exportCSV()">⬇ Exportar CSV</button>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">Total</div><div class="stat-value" id="s-total">0</div></div>
+      <div class="stat-card"><div class="stat-label">Pendentes</div><div class="stat-value warn" id="s-pend">0</div></div>
+      <div class="stat-card"><div class="stat-label">Aprovados</div><div class="stat-value success" id="s-aprov">0</div></div>
+      <div class="stat-card"><div class="stat-label">Concluídos</div><div class="stat-value muted" id="s-conc">0</div></div>
+    </div>
+    <div class="filter-bar">
+      <input type="text" id="filtro-texto" placeholder="🔍 Buscar por empresa, responsável ou ID..." oninput="renderPainel()">
+      <select id="filtro-status" onchange="renderPainel()"><option value="">Todos os status</option><option>Pendente</option><option>Aprovado</option><option>Recusado</option><option>Concluído</option></select>
+      <select id="filtro-tipo" onchange="renderPainel()"><option value="">Todos os tipos</option><option>Compra de produto</option><option>Contratação de serviço</option><option>Renovação de contrato</option><option>Compra de material de escritório</option><option>Compra de equipamento</option><option>Outro</option></select>
+    </div>
+    <div class="orders-list" id="orders-list"></div>
+  </div>
+</main>
+<div id="toast">✔ Solicitação enviada com sucesso!</div>
+
+<script>
 let orders = JSON.parse(localStorage.getItem('famaqui_orders') || '[]');
 function save() { try { localStorage.setItem('famaqui_orders', JSON.stringify(orders)); } catch(e){} }
 
@@ -50,19 +434,15 @@ async function atualizarStatusNaPlanilha(id, novoStatus, observacao) {
 }
 
 function submitForm() {
-  alert("Teste: função submitForm foi chamada!");
-  
   const empresa = document.getElementById('f-empresa').value.trim();
   const resp = document.getElementById('f-responsavel').value.trim();
   const email = document.getElementById('f-email').value.trim();
   const tipo = document.getElementById('f-tipo').value;
   const items = getItems();
-  
   if (!empresa || !resp || !email || !tipo || !items.length) {
     alert('Preencha todos os campos obrigatórios (*)');
     return;
   }
-  
   const now = new Date();
   const order = {
     id: 'OC-' + String(orders.length + 1).padStart(4, '0'),
@@ -77,20 +457,16 @@ function submitForm() {
     hora: now.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}),
     ts: now.getTime()
   };
-  
   fetch(URL_SHEETS, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(order) })
     .catch(erro => console.log('Erro ao enviar para planilha:', erro));
-  
   orders.unshift(order);
   save();
   showToast('✔ Solicitação ' + order.id + ' enviada!');
-  
   ['f-empresa','f-responsavel','f-email','f-fornecedor','f-link','f-obs'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('f-tipo').value = '';
   document.getElementById('f-urgencia').value = 'Normal';
   document.getElementById('f-prazo').value = '';
   document.getElementById('items-list').innerHTML = '<div class="item-row"><input type="text" placeholder="Ex: Teste de avaliação psicológica" class="item-desc"><input type="number" placeholder="1" min="1" class="item-qtd"><input type="text" placeholder="R$ 0,00" class="item-valor"><button class="btn-remove" onclick="removeItem(this)" style="visibility:hidden">×</button></div>';
-  
   renderPainel();
 }
 
@@ -126,7 +502,7 @@ function renderPainel() {
   list.innerHTML = filtered.map(o => {
     const urgClass = o.urgencia === 'Muito urgente' ? 'muito-urgente' : o.urgencia === 'Urgente' ? 'urgente' : '';
     const urgBadge = o.urgencia !== 'Normal' ? `<span class="${urgClass}">⚡ ${o.urgencia}</span>` : '';
-    const itemRows = o.items.map(i => `<tr><td>${i.desc}</td><td>${i.qtd}</td><td>${i.valor || '—'}</td></tr>`).join('');
+    const itemRows = o.items.map(i => `   <td>${i.desc}</td><td>${i.qtd}</td><td>${i.valor || '—'}</td>`).join('');
     const prazoFmt = o.prazo ? new Date(o.prazo + 'T00:00:00').toLocaleDateString('pt-BR') : '';
     let actions = [];
     if (o.status === 'Pendente') actions.push(`<button class="btn-action btn-aprovar" onclick="setStatus('${o.id}','Aprovado')">✔ Aprovar</button><button class="btn-action btn-recusar" onclick="setStatus('${o.id}','Recusado')">✖ Recusar</button>`);
@@ -142,14 +518,4 @@ function exportCSV() {
   const header = ['ID','Data','Empresa','Responsável','E-mail','Tipo','Urgência','Status','Fornecedor','Prazo','Itens','Link Anexo','Observações'];
   const rows = orders.map(o => {
     const itens = o.items.map(i => `${i.desc} (x${i.qtd})`).join(' | ');
-    return [o.id, o.data+' '+o.hora, o.empresa, o.responsavel, o.email, o.tipo, o.urgencia, o.status, o.fornecedor||'', o.prazo||'', itens, o.linkAnexo||'', o.obs||'']
-      .map(v => '"' + String(v).replace(/"/g,'""') + '"').join(',');
-  });
-  const csv = '\uFEFF' + [header.join(','), ...rows].join('\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
-  a.download = 'ordens-de-compra-' + new Date().toISOString().slice(0,10) + '.csv';
-  a.click();
-}
-
-renderPainel();
+    return [o.id, o.data+' '+o.hora, o.empresa, o.responsavel, o.email, o.tipo, o.urgencia, o.status, o.fornecedor||'', o.prazo||'', itens,
