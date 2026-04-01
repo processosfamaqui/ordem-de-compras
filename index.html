@@ -382,12 +382,10 @@ input::placeholder, textarea::placeholder { color: var(--text3); }
 <div id="toast">✔ Solicitação enviada com sucesso!</div>
 
 <script>
-// Variável global
-let orders = [];
+let orders = JSON.parse(localStorage.getItem('famaqui_orders') || '[]');
+function save() { try { localStorage.setItem('famaqui_orders', JSON.stringify(orders)); } catch(e){} }
 
-// Funções básicas
 function showPage(p) {
-  alert("showPage chamada: " + p);
   document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
   document.getElementById('page-' + p).classList.add('active');
   document.querySelectorAll('nav button').forEach((b,i) => b.classList.toggle('active', ['form','painel'][i] === p));
@@ -395,7 +393,6 @@ function showPage(p) {
 }
 
 function addItem() {
-  alert("addItem chamada");
   const list = document.getElementById('items-list');
   const row = document.createElement('div');
   row.className = 'item-row';
@@ -404,20 +401,11 @@ function addItem() {
   updateRemoveBtns();
   row.querySelector('.item-desc').focus();
 }
-
-function removeItem(btn) { 
-  btn.closest('.item-row').remove(); 
-  updateRemoveBtns(); 
-}
-
+function removeItem(btn) { btn.closest('.item-row').remove(); updateRemoveBtns(); }
 function updateRemoveBtns() {
   const rows = document.querySelectorAll('.item-row');
-  rows.forEach(r => { 
-    const b = r.querySelector('.btn-remove'); 
-    if (b) b.style.visibility = rows.length > 1 ? 'visible' : 'hidden'; 
-  });
+  rows.forEach(r => { const b = r.querySelector('.btn-remove'); if (b) b.style.visibility = rows.length > 1 ? 'visible' : 'hidden'; });
 }
-
 function getItems() {
   return Array.from(document.querySelectorAll('.item-row')).map(r => ({
     desc: r.querySelector('.item-desc').value.trim(),
@@ -425,28 +413,36 @@ function getItems() {
     valor: r.querySelector('.item-valor').value.trim()
   })).filter(i => i.desc);
 }
-
 function showToast(msg) {
-  alert(msg);
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3200);
 }
 
+const URL_SHEETS = "https://script.google.com/macros/s/AKfycbz3gWryJp3HSZ0OtX5wyEHHdZOBzIUHmxfZWM5LQpbbpnpkiXzbifAz0bc9BaMG53aTlQ/exec";
+
+async function atualizarStatusNaPlanilha(id, novoStatus, observacao) {
+  try {
+    await fetch(URL_SHEETS, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, status: novoStatus, obs: observacao, atualizarStatus: true })
+    });
+  } catch(erro) { console.log('Erro ao atualizar status na planilha:', erro); }
+}
+
 function submitForm() {
-  alert("submitForm chamada!");
   const empresa = document.getElementById('f-empresa').value.trim();
   const resp = document.getElementById('f-responsavel').value.trim();
   const email = document.getElementById('f-email').value.trim();
   const tipo = document.getElementById('f-tipo').value;
   const items = getItems();
-  
   if (!empresa || !resp || !email || !tipo || !items.length) {
     alert('Preencha todos os campos obrigatórios (*)');
     return;
   }
-  
   const now = new Date();
   const order = {
     id: 'OC-' + String(orders.length + 1).padStart(4, '0'),
@@ -461,34 +457,77 @@ function submitForm() {
     hora: now.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}),
     ts: now.getTime()
   };
-  
+  fetch(URL_SHEETS, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(order) })
+    .catch(erro => console.log('Erro ao enviar para planilha:', erro));
   orders.unshift(order);
+  save();
   showToast('✔ Solicitação ' + order.id + ' enviada!');
-  
-  // Limpar formulário
   ['f-empresa','f-responsavel','f-email','f-fornecedor','f-link','f-obs'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('f-tipo').value = '';
   document.getElementById('f-urgencia').value = 'Normal';
   document.getElementById('f-prazo').value = '';
   document.getElementById('items-list').innerHTML = '<div class="item-row"><input type="text" placeholder="Ex: Teste de avaliação psicológica" class="item-desc"><input type="number" placeholder="1" min="1" class="item-qtd"><input type="text" placeholder="R$ 0,00" class="item-valor"><button class="btn-remove" onclick="removeItem(this)" style="visibility:hidden">×</button></div>';
-  
   renderPainel();
 }
 
+async function setStatus(id, status) {
+  const o = orders.find(x => x.id === id);
+  if (!o) return;
+  o.status = status;
+  save();
+  renderPainel();
+  showToast('Status atualizado: ' + status);
+  await atualizarStatusNaPlanilha(id, status, o.obs);
+}
+
+function toggleDetail(id) {
+  const el = document.getElementById('det-' + id);
+  const btn = document.getElementById('btn-ver-' + id);
+  if (!el) return;
+  const open = el.classList.toggle('open');
+  if (btn) btn.textContent = open ? '▲ Ocultar itens' : '▼ Ver itens';
+}
+
 function renderPainel() {
+  const txt = (document.getElementById('filtro-texto').value || '').toLowerCase();
+  const st = document.getElementById('filtro-status').value;
+  const tp = document.getElementById('filtro-tipo').value;
+  const filtered = orders.filter(o => (!txt || o.empresa.toLowerCase().includes(txt) || o.responsavel.toLowerCase().includes(txt) || o.id.toLowerCase().includes(txt)) && (!st || o.status === st) && (!tp || o.tipo === tp));
+  document.getElementById('s-total').textContent = orders.length;
+  document.getElementById('s-pend').textContent = orders.filter(o => o.status === 'Pendente').length;
+  document.getElementById('s-aprov').textContent = orders.filter(o => o.status === 'Aprovado').length;
+  document.getElementById('s-conc').textContent = orders.filter(o => o.status === 'Concluído').length;
   const list = document.getElementById('orders-list');
-  if (!orders.length) { 
-    list.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>Nenhuma solicitação encontrada.</p></div>'; 
-    return; 
-  }
-  list.innerHTML = orders.map(o => `<div class="order-card"><div class="order-card-top"><div class="order-id">${o.id} · ${o.data}</div><div class="order-empresa">${o.empresa}</div><div class="order-tipo">${o.tipo}</div></div></div>`).join('');
+  if (!filtered.length) { list.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>Nenhuma solicitação encontrada.</p></div>'; return; }
+  list.innerHTML = filtered.map(o => {
+    const urgClass = o.urgencia === 'Muito urgente' ? 'muito-urgente' : o.urgencia === 'Urgente' ? 'urgente' : '';
+    const urgBadge = o.urgencia !== 'Normal' ? `<span class="${urgClass}">⚡ ${o.urgencia}</span>` : '';
+    const itemRows = o.items.map(i => `    Whether${i.desc}   Whether${i.qtd}   Whether${i.valor || '—'}   `).join('');
+    const prazoFmt = o.prazo ? new Date(o.prazo + 'T00:00:00').toLocaleDateString('pt-BR') : '';
+    let actions = [];
+    if (o.status === 'Pendente') actions.push(`<button class="btn-action btn-aprovar" onclick="setStatus('${o.id}','Aprovado')">✔ Aprovar</button><button class="btn-action btn-recusar" onclick="setStatus('${o.id}','Recusado')">✖ Recusar</button>`);
+    if (o.status === 'Aprovado') actions.push(`<button class="btn-action" onclick="setStatus('${o.id}','Concluído')">✔ Concluído</button>`);
+    if (o.status !== 'Pendente') actions.push(`<button class="btn-action" onclick="setStatus('${o.id}','Pendente')">↩ Reabrir</button>`);
+    actions.push(`<button class="btn-ver" id="btn-ver-${o.id}" onclick="toggleDetail('${o.id}')">▼ Ver itens</button>`);
+    return `<div class="order-card"><div class="order-card-top"><div class="order-top-row"><div><div class="order-id">${o.id} · ${o.data} às ${o.hora}</div><div class="order-empresa">${o.empresa}</div><div class="order-tipo">${o.tipo}</div></div><span class="badge badge-${o.status}">${o.status}</span></div><div class="order-meta"><span>👤 ${o.responsavel}</span>${o.fornecedor ? `<span>🏪 ${o.fornecedor}</span>` : ''}${prazoFmt ? `<span>📅 Prazo: ${prazoFmt}</span>` : ''}${urgBadge}</div></div><div class="order-footer">${actions.join('')}</div><div class="order-detail" id="det-${o.id}"><table class="detail-items"><thead> <tr><th>Item</th><th>Qtd</th><th>Valor est.</th></tr> </thead><tbody>${itemRows}</tbody> </table>${o.obs ? `<div class="detail-obs"><strong>Observações</strong>${o.obs}</div>` : ''}</div></div>`;
+  }).join('');
 }
 
 function exportCSV() {
-  alert("Exportar CSV");
+  if (!orders.length) { alert('Não há pedidos para exportar.'); return; }
+  const header = ['ID','Data','Empresa','Responsável','E-mail','Tipo','Urgência','Status','Fornecedor','Prazo','Itens','Link Anexo','Observações'];
+  const rows = orders.map(o => {
+    const itens = o.items.map(i => `${i.desc} (x${i.qtd})`).join(' | ');
+    return [o.id, o.data+' '+o.hora, o.empresa, o.responsavel, o.email, o.tipo, o.urgencia, o.status, o.fornecedor||'', o.prazo||'', itens, o.linkAnexo||'', o.obs||'']
+      .map(v => '"' + String(v).replace(/"/g,'""') + '"').join(',');
+  });
+  const csv = '\uFEFF' + [header.join(','), ...rows].join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
+  a.download = 'ordens-de-compra-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
 }
 
-// Inicializar
 renderPainel();
 </script>
 </body>
