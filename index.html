@@ -320,14 +320,12 @@ input::placeholder, textarea::placeholder { color: var(--text3); }
 </header>
 
 <main>
-  <!-- FORMULÁRIO -->
   <div id="page-form" class="page active">
     <div class="page-header">
       <h1>Nova solicitação</h1>
       <p>Preencha os dados abaixo para solicitar uma compra ou contratação de serviço.</p>
     </div>
 
-    <!-- AVISO DE PRAZO -->
     <div class="card" style="background: var(--accent-light); border-left: 4px solid var(--accent); margin-bottom: 1.5rem;">
       <div style="display: flex; align-items: center; gap: 12px;">
         <span style="font-size: 28px;">⏱️</span>
@@ -343,90 +341,30 @@ input::placeholder, textarea::placeholder { color: var(--text3); }
     <div class="card">
       <div class="card-title">Informações gerais</div>
       <div class="form-grid">
-        <div class="form-group">
-          <label>Empresa / Setor solicitante *</label>
-          <input type="text" id="f-empresa" placeholder="Ex: Famaqui">
-        </div>
-        <div class="form-group">
-          <label>Responsável pela solicitação *</label>
-          <input type="text" id="f-responsavel" placeholder="Nome completo">
-        </div>
-        <div class="form-group">
-          <label>E-mail para retorno *</label>
-          <input type="email" id="f-email" placeholder="email@famaqui.com.br">
-          <small style="font-size: 11px; color: var(--text3);">Você receberá um e-mail quando o pedido for aprovado ou recusado</small>
-        </div>
-        <div class="form-group">
-          <label>Tipo de solicitação *</label>
-          <select id="f-tipo">
-            <option value="">Selecione...</option>
-            <option>Compra de produto</option>
-            <option>Contratação de serviço</option>
-            <option>Renovação de contrato</option>
-            <option>Compra de material de escritório</option>
-            <option>Compra de equipamento</option>
-            <option>Outro</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Urgência</label>
-          <select id="f-urgencia">
-            <option>Normal</option>
-            <option>Urgente</option>
-            <option>Muito urgente</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Fornecedor sugerido</label>
-          <input type="text" id="f-fornecedor" placeholder="Nome do fornecedor (opcional)">
-        </div>
-        <div class="form-group">
-          <label>Link do anexo (Google Drive)</label>
-          <input type="url" id="f-link" placeholder="https://drive.google.com/...">
-          <small style="font-size: 11px; color: var(--text3);">Faça upload no Drive e cole o link aqui</small>
-        </div>
-        <div class="form-group">
-          <label>Prazo desejado</label>
-          <input type="date" id="f-prazo">
-        </div>
-        <div class="form-group full">
-          <label>Justificativa / Observações</label>
-          <textarea id="f-obs" placeholder="Descreva o motivo da solicitação, uso pretendido, referências, etc."></textarea>
-        </div>
+        <div class="form-group"><label>Empresa / Setor solicitante *</label><input type="text" id="f-empresa" placeholder="Ex: Famaqui"></div>
+        <div class="form-group"><label>Responsável pela solicitação *</label><input type="text" id="f-responsavel" placeholder="Nome completo"></div>
+        <div class="form-group"><label>E-mail para retorno *</label><input type="email" id="f-email" placeholder="email@famaqui.com.br"><small style="font-size: 11px; color: var(--text3);">Você receberá um e-mail quando o pedido for aprovado ou recusado</small></div>
+        <div class="form-group"><label>Tipo de solicitação *</label><select id="f-tipo"><option value="">Selecione...</option><option>Compra de produto</option><option>Contratação de serviço</option><option>Renovação de contrato</option><option>Compra de material de escritório</option><option>Compra de equipamento</option><option>Outro</option></select></div>
+        <div class="form-group"><label>Urgência</label><select id="f-urgencia"><option>Normal</option><option>Urgente</option><option>Muito urgente</option></select></div>
+        <div class="form-group"><label>Fornecedor sugerido</label><input type="text" id="f-fornecedor" placeholder="Nome do fornecedor (opcional)"></div>
+        <div class="form-group"><label>Link do anexo (Google Drive)</label><input type="url" id="f-link" placeholder="https://drive.google.com/..."><small style="font-size: 11px; color: var(--text3);">Faça upload no Drive e cole o link aqui</small></div>
+        <div class="form-group"><label>Prazo desejado</label><input type="date" id="f-prazo"></div>
+        <div class="form-group full"><label>Justificativa / Observações</label><textarea id="f-obs" placeholder="Descreva o motivo da solicitação, uso pretendido, referências, etc."></textarea></div>
       </div>
     </div>
 
     <div class="card">
       <div class="card-title">Itens solicitados *</div>
-      <div class="item-header">
-        <span>Descrição do item</span>
-        <span>Qtd</span>
-        <span>Valor estimado</span>
-        <span></span>
-      </div>
-      <div id="items-list">
-        <div class="item-row">
-          <input type="text" placeholder="Ex: Teste de avaliação psicológica" class="item-desc">
-          <input type="number" placeholder="1" min="1" class="item-qtd">
-          <input type="text" placeholder="R$ 0,00" class="item-valor">
-          <button class="btn-remove" onclick="removeItem(this)" title="Remover" style="visibility:hidden">×</button>
-        </div>
-      </div>
+      <div class="item-header"><span>Descrição do item</span><span>Qtd</span><span>Valor estimado</span><span></span></div>
+      <div id="items-list"><div class="item-row"><input type="text" placeholder="Ex: Teste de avaliação psicológica" class="item-desc"><input type="number" placeholder="1" min="1" class="item-qtd"><input type="text" placeholder="R$ 0,00" class="item-valor"><button class="btn-remove" onclick="removeItem(this)" title="Remover" style="visibility:hidden">×</button></div></div>
       <button class="btn-add-item" onclick="addItem()">+ Adicionar item</button>
-      <div class="form-footer">
-        <span class="required-note">* Campos obrigatórios</span>
-        <button class="btn-submit" onclick="submitForm()">Enviar solicitação →</button>
-      </div>
+      <div class="form-footer"><span class="required-note">* Campos obrigatórios</span><button class="btn-submit" onclick="submitForm()">Enviar solicitação →</button></div>
     </div>
   </div>
 
-  <!-- PAINEL -->
   <div id="page-painel" class="page">
     <div class="page-header" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-      <div>
-        <h1>Painel de pedidos</h1>
-        <p>Gerencie e aprove as solicitações recebidas.</p>
-      </div>
+      <div><h1>Painel de pedidos</h1><p>Gerencie e aprove as solicitações recebidas.</p></div>
       <button class="export-btn" onclick="exportCSV()">⬇ Exportar CSV</button>
     </div>
     <div class="stats-grid">
@@ -484,8 +422,7 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3200);
 }
 
-// URL DO APP SCRIPT - NOVA PLANILHA
-const URL_SHEETS = "https://script.google.com/macros/s/AKfycbweMUyB60UCirAYPVnoQ5yrW_VnDnGjBnYdQBoU3l0EEwaZoiyh6h4sSLG2hp186GZhEcA/exec";
+const URL_SHEETS = "https://script.google.com/macros/s/AKfycbxfQ-2bw_4r8kNRtn8lg6wEwp3vJAXuqsl_sNX-rKVZhGjzrNpEhnVU4FivSmC2SQFtjg/exec";
 
 async function atualizarStatusNaPlanilha(id, novoStatus, observacao) {
   try {
@@ -567,7 +504,7 @@ function renderPainel() {
   list.innerHTML = filtered.map(o => {
     const urgClass = o.urgencia === 'Muito urgente' ? 'muito-urgente' : o.urgencia === 'Urgente' ? 'urgente' : '';
     const urgBadge = o.urgencia !== 'Normal' ? `<span class="${urgClass}">⚡ ${o.urgencia}</span>` : '';
-    const itemRows = o.items.map(i => `<tr><td>${i.desc}</td><td>${i.qtd}</td><td>${i.valor || '—'}</td></tr>`).join('');
+    const itemRows = o.items.map(i => ` <td>${i.desc}</td><td>${i.qtd}</td><td>${i.valor || '—'}</td>`).join('');
     const prazoFmt = o.prazo ? new Date(o.prazo + 'T00:00:00').toLocaleDateString('pt-BR') : '';
     let actions = [];
     if (o.status === 'Pendente') actions.push(`<button class="btn-action btn-aprovar" onclick="setStatus('${o.id}','Aprovado')">✔ Aprovar</button><button class="btn-action btn-recusar" onclick="setStatus('${o.id}','Recusado')">✖ Recusar</button>`);
