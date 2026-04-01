@@ -422,8 +422,8 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3200);
 }
 
-// URL DO APP SCRIPT (ATUALIZADA)
-const URL_SHEETS = "https://script.google.com/macros/s/AKfycbz1TSLkO0DtpgdJ6V9Ey_tSB3xuIsWju9pelbxQHYioi713LOzAJOIO9FagITKCaLlM/exec";
+// URL DO APP SCRIPT (NOVA)
+const URL_SHEETS = "https://script.google.com/macros/s/AKfycbxn4f22y7BGF6QOnV2jbf0K8Mmi0ZkQVsTYaB8__NF6JfMtemu9A_WZF-UZ6tVrUWWjvw/exec";
 
 async function atualizarStatusNaPlanilha(id, novoStatus, observacao) {
   try {
@@ -505,14 +505,14 @@ function renderPainel() {
   list.innerHTML = filtered.map(o => {
     const urgClass = o.urgencia === 'Muito urgente' ? 'muito-urgente' : o.urgencia === 'Urgente' ? 'urgente' : '';
     const urgBadge = o.urgencia !== 'Normal' ? `<span class="${urgClass}">⚡ ${o.urgencia}</span>` : '';
-    const itemRows = o.items.map(i => `  <td>${i.desc}</td><td>${i.qtd}</td><td>${i.valor || '—'}</td>`).join('');
+    const itemRows = o.items.map(i => `   Whether${i.desc}   Whether${i.qtd}   Whether${i.valor || '—'}   `).join('');
     const prazoFmt = o.prazo ? new Date(o.prazo + 'T00:00:00').toLocaleDateString('pt-BR') : '';
     let actions = [];
     if (o.status === 'Pendente') actions.push(`<button class="btn-action btn-aprovar" onclick="setStatus('${o.id}','Aprovado')">✔ Aprovar</button><button class="btn-action btn-recusar" onclick="setStatus('${o.id}','Recusado')">✖ Recusar</button>`);
     if (o.status === 'Aprovado') actions.push(`<button class="btn-action" onclick="setStatus('${o.id}','Concluído')">✔ Concluído</button>`);
     if (o.status !== 'Pendente') actions.push(`<button class="btn-action" onclick="setStatus('${o.id}','Pendente')">↩ Reabrir</button>`);
     actions.push(`<button class="btn-ver" id="btn-ver-${o.id}" onclick="toggleDetail('${o.id}')">▼ Ver itens</button>`);
-    return `<div class="order-card"><div class="order-card-top"><div class="order-top-row"><div><div class="order-id">${o.id} · ${o.data} às ${o.hora}</div><div class="order-empresa">${o.empresa}</div><div class="order-tipo">${o.tipo}</div></div><span class="badge badge-${o.status}">${o.status}</span></div><div class="order-meta"><span>👤 ${o.responsavel}</span>${o.fornecedor ? `<span>🏪 ${o.fornecedor}</span>` : ''}${prazoFmt ? `<span>📅 Prazo: ${prazoFmt}</span>` : ''}${urgBadge}</div></div><div class="order-footer">${actions.join('')}</div><div class="order-detail" id="det-${o.id}"><table class="detail-items"><thead><tr><th>Item</th><th>Qtd</th><th>Valor est.</th></tr></thead><tbody>${itemRows}</tbody></table>${o.obs ? `<div class="detail-obs"><strong>Observações</strong>${o.obs}</div>` : ''}</div></div>`;
+    return `<div class="order-card"><div class="order-card-top"><div class="order-top-row"><div><div class="order-id">${o.id} · ${o.data} às ${o.hora}</div><div class="order-empresa">${o.empresa}</div><div class="order-tipo">${o.tipo}</div></div><span class="badge badge-${o.status}">${o.status}</span></div><div class="order-meta"><span>👤 ${o.responsavel}</span>${o.fornecedor ? `<span>🏪 ${o.fornecedor}</span>` : ''}${prazoFmt ? `<span>📅 Prazo: ${prazoFmt}</span>` : ''}${urgBadge}</div></div><div class="order-footer">${actions.join('')}</div><div class="order-detail" id="det-${o.id}"><table class="detail-items"><thead><tr><th>Item</th><th>Qtd</th><th>Valor est.</th> </thead><tbody>${itemRows}</tbody>   \${o.obs ? `<div class="detail-obs"><strong>Observações</strong>${o.obs}</div>` : ''}</div></div>`;
   }).join('');
 }
 
