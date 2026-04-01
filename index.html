@@ -518,4 +518,17 @@ function exportCSV() {
   const header = ['ID','Data','Empresa','Responsável','E-mail','Tipo','Urgência','Status','Fornecedor','Prazo','Itens','Link Anexo','Observações'];
   const rows = orders.map(o => {
     const itens = o.items.map(i => `${i.desc} (x${i.qtd})`).join(' | ');
-    return [o.id, o.data+' '+o.hora, o.empresa, o.responsavel, o.email, o.tipo, o.urgencia, o.status, o.fornecedor||'', o.prazo||'', itens,
+    return [o.id, o.data+' '+o.hora, o.empresa, o.responsavel, o.email, o.tipo, o.urgencia, o.status, o.fornecedor||'', o.prazo||'', itens, o.linkAnexo||'', o.obs||'']
+      .map(v => '"' + String(v).replace(/"/g,'""') + '"').join(',');
+  });
+  const csv = '\uFEFF' + [header.join(','), ...rows].join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
+  a.download = 'ordens-de-compra-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+renderPainel();
+</script>
+</body>
+</html>
